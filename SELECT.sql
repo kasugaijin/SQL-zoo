@@ -154,3 +154,48 @@ SELECT winner, subject
   FROM nobel
   WHERE yr = 1984
   ORDER BY subject IN ('Physics','Chemistry'), subject, winner
+
+--SELECT within SELECT tutorial
+--Display countries with population greater than Russia
+SELECT name 
+FROM world
+  WHERE population >
+     (SELECT population FROM world
+      WHERE name='Russia')
+
+--Display European countries with a per capita GDP greater than that of UK
+SELECT name
+  FROM world
+  WHERE continent = 'Europe' AND
+    GDP/Population > (SELECT gdp/population FROM world WHERE name = 'United Kingdom')
+
+--Display all countries on the same continent as Australia and Uruguay, ordered by country name
+SELECT name, continent
+  FROM world
+  WHERE continent = (SELECT continent FROM world WHERE name = 'Argentina') OR 
+    continent = (SELECT continent FROM world WHERE name = 'Australia')
+  Order BY name
+
+--Display name and population of country with population > Canada and < Poland
+SELECT name, population
+  FROM world
+  WHERE population > (SELECT population FROM world WHERE name = 'Canada') AND
+    population < (SELECT population FROM world WHERE name = 'Poland')
+
+--Display European country populations as a percentage of Germanys population
+SELECT name, CONCAT(ROUND(population / (SELECT population FROM world WHERE name = 'Germany')*100),'%') AS percentage
+  FROM world
+  WHERE continent = 'Europe'
+
+--Display countries with GDP greater than the largest GDP in Europe
+SELECT name 
+  FROM world
+  WHERE gdp >= ALL (SELECT gdp FROM world WHERE GDP > 0 AND continent = 'Europe') AND 
+    continent != 'Europe'
+
+--Display the largets countries by area on each continent
+SELECT continent, name, area FROM world x
+  WHERE area >= ALL
+    (SELECT area FROM world y
+        WHERE y.continent=x.continent
+          AND area>0)

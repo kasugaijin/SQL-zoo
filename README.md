@@ -1,2 +1,2 @@
 # SQL-zoo
-Exercises to practice querying a relational database using SQL. These exercises are from https://sqlzoo.net/wiki/SQL_Tutorial.
+This repository contains exercises to practice querying a relational database using SQL, specifically, SELECT, Aggregate Functions, JOIN, Using NULL and SELF JOIN. These exercises are from https://sqlzoo.net/wiki/SQL_Tutorial. Files are organised by query type.

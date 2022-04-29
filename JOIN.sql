@@ -93,3 +93,95 @@ SELECT game.mdate, game.team1,
   GROUP BY game.mdate, game.team1, game.team2
 
 ORDER BY game.mdate, game.id, game.team1, game.team2
+
+--More JOIN statements
+--Display movies made in 1962
+SELECT id, title
+  FROM movie
+  WHERE yr = 1962
+
+--Display the year a movie was made
+SELECT yr
+  FROM movie
+  WHERE title = 'Citizen Kane'
+
+--Display all movies with 'Star Trek' in title and order by year
+SELECT id, title, yr
+  FROM movie
+  WHERE title LIKE '%Star Trek%'
+  ORDER BY yr
+
+--Display actor's ID
+SELECT id 
+  FROM actor
+  WHERE name = 'Glenn Close'
+
+--Display movie ID
+SELECT id
+  FROM movie
+  WHERE title = 'Casablanca'
+
+--Display all actors in a Casablanca
+SELECT actor.name
+  FROM actor
+  JOIN casting
+    ON actor.id = casting.actorid
+  WHERE casting.movieid = 11768
+
+--Display all actors in Alien
+SELECT actor.name
+  FROM actor
+  JOIN casting
+    ON actor.id = casting.actorid
+  JOIN movie
+    ON movie.id = casting.movieid
+  WHERE movie.title = 'Alien'
+
+--Display all movies Harrison Ford was in
+SELECT movie.title
+  FROM actor 
+  JOIN casting 
+    ON casting.actorid = actor.id
+  JOIN movie 
+    ON movie.id = casting.movieid
+  WHERE actor.name = 'Harrison Ford'
+
+--Display all movies Harrison Ford appeared in but not as a starring role
+SELECT movie.title
+  FROM actor
+  JOIN casting
+    ON casting.actorid = actor.id
+  JOIN movie
+    ON movie.id = casting.movieid
+  WHERE actor.name = 'Harrison Ford' AND casting.ord != 1
+
+--Display the movie and leading role for all movies in 1962
+SELECT movie.title, actor.name
+  FROM movie
+  JOIN casting
+    ON movie.id = casting.movieid
+  JOIN actor
+    ON actor.id = casting.actorid
+  WHERE movie.yr = 1962 AND casting.ord = 1
+
+--Display the year and the number of movies Rock Hudson made each year for any year in which he made more than 2 movies
+SELECT yr,COUNT(title) 
+  FROM movie 
+  JOIN casting 
+    ON movie.id=movieid
+  JOIN actor
+    ON actorid=actor.id
+  WHERE name='Rock Hudson'
+  GROUP BY yr
+    HAVING COUNT(title) > 2
+  
+--Display the film title and the leading actor for all of the films 'Julie Andrews' played in
+SELECT movie.title, actor.name
+  FROM actor
+  JOIN casting
+    ON actor.id = casting.actorid
+  JOIN movie
+   ON movie.id = casting.movieid
+  WHERE casting.movieid IN (SELECT casting.movieID 
+                            FROM casting JOIN actor ON actor.id = casting.actorid 
+                            WHERE actor.name = 'Julie Andrews') AND casting.ord = 1
